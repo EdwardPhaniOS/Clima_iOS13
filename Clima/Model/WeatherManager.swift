@@ -15,7 +15,20 @@ protocol WeatherManagerDelegate: class {
 }
 
 struct WeatherManager {
-    let weatherURL = "https://api.openweathermap.org/data/2.5/weather?appid=d6bfb8d977a825aeb92cb1aa0e2b869e&units=metric"
+    
+    var weatherURL: String = ""
+    
+    init() {
+        guard let path = Bundle.main.path(forResource: "Secret", ofType: "plist")
+            else { print("Error: Can't find secret API Key"); return }
+        
+        if let keysDict = NSDictionary(contentsOfFile: path),
+            let apiKey = keysDict["apiKey"] as? String {
+            self.weatherURL = "https://api.openweathermap.org/data/2.5/weather?appid=\(apiKey)&units=metric"
+        } else {
+            print("Error: Can't find secret API Key")
+        }
+    }
     
     weak var delegate: WeatherManagerDelegate?
     
